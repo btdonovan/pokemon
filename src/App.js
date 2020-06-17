@@ -1,5 +1,16 @@
 import React, { Component, useContext } from 'react';
 
+
+// As a user I want to click on a
+//  “View similar types” button for a 
+//  specific pokemon and I will see a 
+//  list of other pokemon with the same 
+//  type.
+
+// Put button in PokemonDetail
+// on click we need to go to a list view similar to view all
+// except the url https://pokeapi.co/api/v2/type/{id or name}/
+
 const PokeContext = React.createContext();
 
 function PokemonURL() {
@@ -50,12 +61,15 @@ function PokemonDetail() {
   if (!context.state.currentPokemon.abilities) {
     return null;
   }
+  let primaryType = context.state.currentPokemon.types[0].type.name
+  let primaryAbility = context.state.currentPokemon.abilities[0].ability.name
   return (
     <React.Fragment>
       My Pokemon Details<br />
       Name: {context.state.currentPokemon.name}<br />
-      Primary Type: {context.state.currentPokemon.types[0].type.name}<br />
-      Primary Ability: {context.state.currentPokemon.abilities[0].ability.name}
+      Primary Type: {primaryType}<br />
+      Primary Ability: {primaryAbility}<br />
+      <button name={primaryType} onClick={context.loadAllSimilarTypes}>Find Similar Types</button>
     </React.Fragment>
   )
 }    /* //data.types[0].type.name */
@@ -70,7 +84,7 @@ function NewPokemon() {
                 New pokemon:
                 <input type="text" name="name" onChange={ context.handleChange }/>
             </label>
-            <input type="submit" value="Submit"/>
+            <input type="submit" value="Search" />
             <input type="button" value="View All" onClick={ context.handleViewAll } />
         </form>
     </React.Fragment>
@@ -89,12 +103,12 @@ class MyProvider extends Component {
   async doSearch(url) {
     const response = await fetch(url)
     const json = await response.json()
-    this.setState({currentPokemon: json})
+    await this.setState({currentPokemon: json})
   }
 
-  async componentDidMount() {
-    this.doSearch(this.state.url)
-  }
+  // async componentDidMount() {
+  //   this.doSearch(this.state.url)
+  // }
 
   render() {
     return (
@@ -135,6 +149,13 @@ class MyProvider extends Component {
           })
           this.doSearch(this.state.url)
           this.render()
+        },
+        loadAllSimilarTypes: (event) => {
+          let url = 'https://pokeapi.co/api/v2/type/' + event.target.name
+          this.setState({
+            url: url,
+          })
+          this.doSearch(this.state.url)
         }
       }}>
         {this.props.children}
@@ -142,7 +163,7 @@ class MyProvider extends Component {
     )
   }
 }
-
+//https://pokeapi.co/api/v2/type/{id or name}/
 function App() {
   return (
     <MyProvider>
