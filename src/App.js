@@ -15,11 +15,35 @@ function PokemonURL() {
     </React.Fragment>
   );
 }
+function PokemonList() {
+  const context = useContext(PokeContext);
+  if (!context.state.currentPokemon.results) {
+    return null;
+  }
+  let allPokemon = context.state.currentPokemon.results
+  return (
+    <div>{allPokemon.map(element => <DisplayPokemonItems name={element.name} id={element.url.split('/')[6]}/>)}</div>
+  )
+}
+function DisplayPokemonItems(props) {
+  const context = useContext(PokeContext);
+  return (
+    
+    <div>
+      <img 
+        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${props.id}.png`} 
+        alt={props.name + ' image not found'}
+        name={props.name}
+        onClick={ context.loadFromViewAll } />
+      <div>{props.name}</div>
+    </div>
+  )
+}
+
 
 function PokemonDetail() {
 
   const context = useContext(PokeContext);
-  console.log(context.state.currentPokemon)
   if (!context.state.currentPokemon.types) {
     return null;
   }
@@ -47,6 +71,7 @@ function NewPokemon() {
                 <input type="text" name="name" onChange={ context.handleChange }/>
             </label>
             <input type="submit" value="Submit"/>
+            <input type="button" value="View All" onClick={ context.handleViewAll } />
         </form>
     </React.Fragment>
   );
@@ -61,14 +86,14 @@ class MyProvider extends Component {
     url: ''
   }
   
-  async doSearch() {
-    const response = await fetch(this.state.url)
+  async doSearch(url) {
+    const response = await fetch(url)
     const json = await response.json()
     this.setState({currentPokemon: json})
   }
 
   async componentDidMount() {
-    this.doSearch()
+    this.doSearch(this.state.url)
   }
 
   render() {
@@ -89,10 +114,28 @@ class MyProvider extends Component {
               name: ''
             }
           })
-          this.doSearch()
+          this.doSearch(this.state.url)
           event.preventDefault()
           this.render()
         },
+        handleViewAll: (event) => {
+          this.setState({
+            url: 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=1000',
+            pokemon: {
+              name: ''
+            }
+          })
+          this.doSearch(this.state.url)
+          event.preventDefault()
+          this.render()
+        },
+        loadFromViewAll: (event) => {
+          this.setState({
+            url: 'https://pokeapi.co/api/v2/pokemon/' + event.target.name,
+          })
+          this.doSearch(this.state.url)
+          this.render()
+        }
       }}>
         {this.props.children}
       </PokeContext.Provider>
@@ -107,6 +150,7 @@ function App() {
         <PokemonURL />
         <NewPokemon />
         <PokemonDetail />
+        <PokemonList />
       </div>
     </MyProvider>
   );
