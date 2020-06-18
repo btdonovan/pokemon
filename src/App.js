@@ -1,89 +1,12 @@
 import React from 'react';
 import './App.css';
+import Search from './search'
+// import DisplayPokemonItems from './displayPokemonItems'
+import ViewAll from './viewAll'
+import Detail from './detail'
 
 // Todo:
 // Add collection sidebar that shows pokemon in our collection
-
-function Search(props) {
-  return (
-    <React.Fragment>
-      <form onSubmit={ props.handleSubmit }>
-          <input type="text" name="name" onChange={ props.handleChange } placeholder="Search for a Pokemon"/>
-          <input type="submit" name="search" value="Search" />
-          <input type="button" name="viewall" value="View All" onClick={props.handleViewAll}/>
-          <input type="button" name="viewCollection" value="View Collection" onClick={props.handleViewCollection}/>
-
-      </form>
-    </React.Fragment>
-  )
-}
-
-function DisplayPokemonItems(props) {
-  return (
-    <div className='pokethumb'>
-      <img 
-        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${props.id}.png`} 
-        alt={'X'}
-        name={props.name}
-        onClick={props.handleGetDetail}
-        />
-      <div>{props.name}</div>
-    </div>
-  )
-}
-
-function ViewAll(props) {
-  if (!props.view) {
-    return (null)
-  }
-  let sequence = 0
-  return (
-    <div>{props.pokelist.map(element => {
-      sequence++
-      return (
-        <DisplayPokemonItems 
-          key={sequence} 
-          handleGetDetail={props.handleGetDetail} 
-          name={element.name} 
-          id={element.url.split('/')[6]}/>)}
-      )}
-    </div>
-  )
-}
-
-function Detail(props) {
-  if (!props.view) {
-    return (null)
-  }
-  return (
-    <div>
-      <p>Name: {props.pokemon.name}</p>
-      <p>Primary Type: {props.pokemon.type}</p>
-      <img src={props.pokemon.pictureUrl} alt={props.pokemon.name} /><br />
-      <button 
-        type='button' 
-        name={props.pokemon.type}
-        onClick={props.handleGetSimilar}
-        value="View Same Type">view same type</button>
-      <button 
-        type='button' 
-        name={props.pokemon.name}
-        onClick={props.addToCollection}
-        value="collect">Add to Collection</button>
-        
-      <Message viewMessage={props.viewMessage} name={props.pokemon.name} />
-    </div>
-  )
-}
-
-function Message(props) {
-  if (!props.viewMessage) {
-    return null;
-  }
-  return (
-    <p>{props.name} has been added to your collection.</p>
-  )
-}
 
 class App extends React.Component {
   constructor(props) {
