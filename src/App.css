@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+
+.pokethumb {
+  /* border: 1px solid black; */
+  display: inline-table;
+  margin: 1em;
+
+}
